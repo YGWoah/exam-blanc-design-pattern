@@ -1,4 +1,4 @@
-package me.massoudi;
+package me.massoudi.utils;
 
 import me.massoudi.model.Transaction;
 

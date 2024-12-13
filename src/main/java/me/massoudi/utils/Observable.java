@@ -1,8 +1,6 @@
-package me.massoudi;
+package me.massoudi.utils;
 
 import me.massoudi.model.Transaction;
-
-import java.util.List;
 
 public interface Observable {
     void subscribe(Observer observer);

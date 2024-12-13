@@ -1,43 +1,36 @@
 package me.massoudi;
 
-import me.massoudi.ascpects.Log;
 import me.massoudi.model.Transaction;
 import me.massoudi.model.TransactionType;
-import me.massoudi.notificationStrategy.HistoryStrategy;
-import me.massoudi.notificationStrategy.ScoringStrategy;
+import me.massoudi.security.SecurityContext;
 
-import java.util.Date;
-import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
-public class Main {
+import static java.util.Set.of;
 
-    @Log
-    public static void test() {
-        System.out.println("test");
-    }
-
+public class Main{
     public static void main(String[] args) {
+        HashSet<String> roles = new HashSet<>(Arrays.asList("ADMIN"));
+        SecurityContext.setUser("JohnDoe", roles);
 
-       test();
+        Agent agent = new Agent("Agent 1");
+        AgentContainer.getInstance().addAgent(agent);
 
-        AgentContainer container = AgentContainer.getInstance();
+        Agent agent2 = new Agent("Agent 2");
+        AgentContainer.getInstance().addAgent(agent2);
 
-
-
-        Agent agent1 = new Agent("Agent1");
-        Agent agent2 = new Agent("Agent2");
-        container.addAgent(agent1);
-        container.addAgent(agent2);
-
-        Transaction transaction1 = new Transaction.Builder()
+        Transaction transaction = new Transaction.Builder()
                 .id("1")
-                .date(new Date())
                 .amount(100)
                 .transactionType(TransactionType.PURCHASE)
                 .build();
 
-        agent1.addTransaction(transaction1);
+        agent.addTransaction(transaction);
+
+
+        System.out.println("Transaction la plus élevée : " + agent.getHighestTransaction());
 
     }
-
 }

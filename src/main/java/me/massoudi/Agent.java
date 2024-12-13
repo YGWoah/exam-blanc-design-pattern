@@ -1,9 +1,14 @@
 package me.massoudi;
 
+import me.massoudi.ascpects.Cachable;
+import me.massoudi.ascpects.Log;
+import me.massoudi.ascpects.SecuredBy;
 import me.massoudi.model.Transaction;
 import me.massoudi.notificationStrategy.HistoryStrategy;
 import me.massoudi.notificationStrategy.NotificationStrategy;
 import me.massoudi.notificationStrategy.ScoringStrategy;
+import me.massoudi.utils.Observable;
+import me.massoudi.utils.Observer;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -35,6 +40,7 @@ public class Agent implements Observable, Observer {
         return transactions;
     }
 
+    @SecuredBy(roles = {"ADMIN"})
     public void addTransaction(Transaction transaction) {
         transactions.add(transaction);
         notifyObservers(transaction);
@@ -68,6 +74,7 @@ public class Agent implements Observable, Observer {
         }
     }
 
+    @Cachable
     public Transaction getHighestTransaction() {
         return transactions.stream()
                 .max(Comparator.comparingDouble(Transaction::getAmount))
@@ -85,6 +92,7 @@ public class Agent implements Observable, Observer {
     }
 
     @Override
+    @Log
     public void notifyObservers(Transaction transaction) {
         for (Observer observer : observers) {
             observer.update(this.name, transaction);
