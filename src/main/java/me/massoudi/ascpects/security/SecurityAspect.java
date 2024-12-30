@@ -1,4 +1,4 @@
-package me.massoudi.ascpects;
+package me.massoudi.ascpects.security;
 
 import me.massoudi.security.SecurityContext;
 import org.aspectj.lang.annotation.Aspect;
@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
 @Aspect
 public class SecurityAspect {
 
-    @Before("@annotation(SecuredBy)")
+    @Before("@annotation(me.massoudi.ascpects.security.SecuredBy)")
     public void checkSecurity(org.aspectj.lang.JoinPoint joinPoint) throws SecurityException {
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         SecuredBy securedBy = method.getAnnotation(SecuredBy.class);

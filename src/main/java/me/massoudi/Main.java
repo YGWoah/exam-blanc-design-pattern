@@ -1,36 +1,72 @@
 package me.massoudi;
 
-import me.massoudi.model.Transaction;
-import me.massoudi.model.TransactionType;
+
+import me.massoudi.ai.NeuralNetwork;
+import me.massoudi.ai.activation.IdentityActivation;
+import me.massoudi.ai.activation.SigmoidActivation;
+import me.massoudi.ai.layers.HiddenLayer;
+import me.massoudi.ai.layers.InputLayer;
+import me.massoudi.ai.layers.OutputLayer;
+import me.massoudi.ascpects.security.SecuredBy;
 import me.massoudi.security.SecurityContext;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static java.util.Set.of;
+public class Main {
 
-public class Main{
     public static void main(String[] args) {
-        HashSet<String> roles = new HashSet<>(Arrays.asList("ADMIN"));
-        SecurityContext.setUser("JohnDoe", roles);
+        // Set up the security context
+        Set<String> roles = new HashSet<>();
+        roles.add("USER");
+        SecurityContext.setUser("john_doe", roles);
 
-        Agent agent = new Agent("Agent 1");
-        AgentContainer.getInstance().addAgent(agent);
+        // Create an instance of the service
+        SomeService service = new SomeService();
 
-        Agent agent2 = new Agent("Agent 2");
-        AgentContainer.getInstance().addAgent(agent2);
+        // Call methods with security checks
+        try {
+            service.userMethod(); // This should pass
+            service.adminMethod(); // This should throw a SecurityException
+        } catch (SecurityException e) {
+            System.out.println(e.getMessage());
+        }
 
-        Transaction transaction = new Transaction.Builder()
-                .id("1")
-                .amount(100)
-                .transactionType(TransactionType.PURCHASE)
-                .build();
+        // Neural network setup and prediction
+        NeuralNetwork network = new NeuralNetwork();
 
-        agent.addTransaction(transaction);
+        // Create and add layers
+        InputLayer inputLayer = new InputLayer(3);
+        HiddenLayer hiddenLayer = new HiddenLayer(5, new SigmoidActivation());
+        OutputLayer outputLayer = new OutputLayer(2, new IdentityActivation());
 
+        network.addLayer(inputLayer);
+        network.addLayer(hiddenLayer);
+        network.addLayer(outputLayer);
 
-        System.out.println("Transaction la plus élevée : " + agent.getHighestTransaction());
+        // Dynamically change activation functions using Strategy Pattern
+        network.setActivationFunctionForLayer(1, new IdentityActivation()); // Hidden Layer
+        network.setActivationFunctionForLayer(2, new SigmoidActivation()); // Output Layer
 
+        // Provide inputs
+        double[] input = {0.5, 0.8, 0.2};
+
+        double[] output = network.predict(input);
+
+        System.out.println("Output: " + Arrays.toString(output));
+    }
+}
+
+class SomeService {
+
+    @SecuredBy(roles = {"ADMIN"})
+    public void adminMethod() {
+        System.out.println("Admin method executed.");
+    }
+
+    @SecuredBy(roles = {"USER", "ADMIN"})
+    public void userMethod() {
+        System.out.println("User method executed.");
     }
 }

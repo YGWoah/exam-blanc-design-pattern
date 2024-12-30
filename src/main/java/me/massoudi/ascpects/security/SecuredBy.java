@@ -1,4 +1,4 @@
-package me.massoudi.ascpects;
+package me.massoudi.ascpects.security;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

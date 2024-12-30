@@ -1,14 +1,13 @@
-package me.massoudi.ascpects;
+package me.massoudi.ascpects.log;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.reflect.MethodSignature;
 
 @Aspect
 public class LogExecutionDuration {
 
-    @Around("@annotation(me.massoudi.ascpects.Log)")
+    @Around("execution(* me.massoudi..*(..))")
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
         Object result = joinPoint.proceed();
